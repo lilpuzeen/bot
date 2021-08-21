@@ -35,7 +35,7 @@ class GetProblem:
                         print(secP, end="\n")
         except Exception:
             driver.quit()
-            print("Ошибка!")
+            print("Ошибка!!!")
 
 
 if __name__ == '__main__':
