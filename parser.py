@@ -5,6 +5,8 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
+from random import choice
+import re
 
 problem_number = 3
 
@@ -26,14 +28,13 @@ class GetProblem:
                 EC.presence_of_element_located((By.CLASS_NAME, "prob_list"))
             )
             problems = problem_list.find_elements_by_class_name("prob_maindiv")
-
-            for prob in problems:
-                prob_text = prob.find_element_by_class_name("pbody")
-                for p in prob_text:
-                    myP = p.find_elements_by_tag_name("p")
-                    for secP in myP:
-                        print(secP, end="\n")
-        except Exception:
+            rnd = choice(problems).text
+            rnd_exact_num = rnd.split()[3]
+            print(rnd_exact_num)
+            print("Done!")
+            driver.quit()
+        except Exception as e:
+            print(e)
             driver.quit()
             print("Ошибка!!!")
 
