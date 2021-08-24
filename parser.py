@@ -6,16 +6,18 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from random import choice
-import re
 
-problem_number = 3
 
-class GetProblem:
+problem_number = 9
+
+
+class GetProblem:  # TODO сделать отдельный метод под получение фотографий, чтобы легче воспользоваться в мэйне
     def __init__(self):
         self.number = problem_number
         self.PATH = "/Users/armantovmasyan/PycharmProjects/bot/chromedriver"
 
     def construct(self):
+        global curr_url
         driver = webdriver.Chrome(self.PATH)
         driver.get("https://math-ege.sdamgia.ru/?redir=1")
         time.sleep(3)
@@ -27,16 +29,26 @@ class GetProblem:
             problem_list = WebDriverWait(driver, 10).until(
                 EC.presence_of_element_located((By.CLASS_NAME, "prob_list"))
             )
+            curr_url = driver.current_url()
             problems = problem_list.find_elements_by_class_name("prob_maindiv")
-            rnd = choice(problems).text
-            rnd_exact_num = rnd.split()[3]
-            print(rnd_exact_num)
+            prob_maindiv = choice(problems)
+            prob_maindiv_text = prob_maindiv.text
+            prob_maindiv_exact_num = prob_maindiv_text.split()[3]
+            prob_maindiv_img = prob_maindiv.find_elements_by_tag_name("img")
+            print(prob_maindiv_exact_num)
+            print(prob_maindiv_text)
             print("Done!")
             driver.quit()
         except Exception as e:
             print(e)
             driver.quit()
             print("Ошибка!!!")
+
+    def getimage(self):
+        driver = webdriver.Chrome(self.PATH)
+        driver.get(curr_url)
+        # TODO сделать поиск по id, и в left_margin найти фотки. return фотки в скриншотах, чтобы бот отправил
+
 
 
 if __name__ == '__main__':

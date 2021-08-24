@@ -1,6 +1,7 @@
 import telebot
 import time
 from telebot import types
+from selenium import webdriver
 
 bot = telebot.TeleBot("1936862836:AAEkdp3-01lk0WQOoRILooZUAA1SVy3XLoE")
 
@@ -57,8 +58,10 @@ def choose_number_problem(message):
     bot.register_next_step_handler(message, show_problem)
 
 
-def show_problem(message):
+def show_problem(message):  # TODO подключить класс из parser.py. Подумать над подключением сервака
+    # TODO Посмотреть почему даблит некоторые сообщения!
+    # TODO провести анализ на наличие фотографий в задании.
+    # TODO в классе GetProblem есть метод getimage. Поработать над его подключением и отправкой фото заданий через screenshot_as_png
     bot.send_message(message.from_user.id, "Done!")
-
 
 bot.polling()
