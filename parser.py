@@ -1,5 +1,5 @@
 import time
-# from main import PROBLEMS, problem_number
+from main import problem_number
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
@@ -8,16 +8,14 @@ from selenium.webdriver.common.keys import Keys
 from random import choice
 from PIL import Image
 
-problem_number = 9
-
 
 class GetProblem:
     def __init__(self):
         self.number = problem_number
-        self.PATH = "/Users/armantovmasyan/PycharmProjects/bot/chromedriver"
+        self.PATH = "C:\\Users\\arman\\PycharmProjects\\bot\\chromedriver.exe"
 
     def construct(self):
-        global curr_url
+        global curr_url, prob_maindiv_exact_num
         # options = webdriver.ChromeOptions()
         # options.add_argument('--headless')
         driver = webdriver.Chrome(self.PATH)
@@ -38,11 +36,9 @@ class GetProblem:
             driver.find_element_by_link_text(f"{prob_maindiv_exact_num}").click()
             driver.implicitly_wait(10)
             curr_url = driver.current_url
-            in_prob_text = prob_maindiv.find_element_by_class_name("pbody")
-            myphoto = Image.open(in_prob_text.screenshot_as_png(f"Problem{prob_maindiv_exact_num}"))
-            # print(prob_maindiv_exact_num)
-            # print(prob_maindiv_text)
-            # print("Done!")
+            maindiv = driver.find_element_by_class_name("prob_maindiv")
+            pbody = maindiv.find_element_by_class_name("pbody")
+            problem_photo = pbody.screenshot(f"Problem{prob_maindiv_exact_num}.png")
             driver.quit()
         except Exception as e:
             print(e)
@@ -50,14 +46,23 @@ class GetProblem:
             driver.quit()
             print("Ошибка!!!")
 
-    def getimage(self):
+    def getimage(self): # TODO анализ на наличие фотографий, иначе return None. Возможно raise TypeError по NoneType-у
         driver = webdriver.Chrome(self.PATH)
         driver.get(curr_url)
+        maindiv = driver.find_element_by_class_name("prob_maindiv")
+        pbody = maindiv.find_element_by_class_name("pbody")
+        img = pbody.find_elements_by_tag_name("img")
+        img[0].screenshot(f"Problem{prob_maindiv_exact_num}_picture.png")
 
-        # TODO сделать поиск по id задания (prob_maindiv_exact_num), и в left_margin найти фотки. return фотки в screenshot_as_png, чтобы бот отправил
-        # TODO анализ на наличие фотографий, иначе return None. Возможно raise TypeError по NoneType-у
+    def getsolution(self):
+        driver = webdriver.Chrome(self.PATH)
+        driver.get(curr_url)
+        maindiv = driver.find_element_by_class_name("prob_maindiv")
+        solution = maindiv.find_element_by_id(f"sol{prob_maindiv_exact_num}")
+        solution_photo = solution.screenshot(f"Problem{prob_maindiv_exact_num}_solution.png")
 
 
 if __name__ == '__main__':
     a = GetProblem()
     a.construct()
+    a.getsolution()

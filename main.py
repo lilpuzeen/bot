@@ -5,7 +5,7 @@ from selenium import webdriver
 
 bot = telebot.TeleBot("1936862836:AAEkdp3-01lk0WQOoRILooZUAA1SVy3XLoE")
 
-problem_number = 0
+problem_number = 13
 PROBLEMS = {1: 'Простейшие текстовые задачи',
             2: 'Чтение графиков и диаграмм',
             3: 'Квадратная решётка, координатная плоскость',
@@ -63,5 +63,6 @@ def show_problem(message):  # TODO подключить класс из parser.p
     # TODO провести анализ на наличие фотографий в задании.
     # TODO в классе GetProblem есть метод getimage. Поработать над его подключением и отправкой фото заданий через screenshot_as_png
     bot.send_message(message.from_user.id, "Done!")
+
 
 bot.polling()
