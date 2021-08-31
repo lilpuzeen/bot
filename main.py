@@ -2,10 +2,11 @@ import telebot
 import time
 from telebot import types
 from selenium import webdriver
+from parser import GetProblem
 
 bot = telebot.TeleBot("1936862836:AAEkdp3-01lk0WQOoRILooZUAA1SVy3XLoE")
 
-problem_number = 13
+
 PROBLEMS = {1: 'Простейшие текстовые задачи',
             2: 'Чтение графиков и диаграмм',
             3: 'Квадратная решётка, координатная плоскость',
@@ -25,6 +26,9 @@ PROBLEMS = {1: 'Простейшие текстовые задачи',
             17: 'Финансовая математика',
             18: 'Задача с параметром',
             19: 'Числа и их свойства'}
+
+woimage = [1, 2, 4, 7, 8, 11, 12, 13, 14, 15, 16, 17, 18]
+withimage = [3, 5, 6, 9, 19]
 
 
 @bot.message_handler(commands=['start'])
@@ -53,16 +57,31 @@ def callback_worker(call):
 def choose_number_problem(message):
     global problem_number
     problem_number = message.text
-    bot.send_message(message.from_user.id, f"Окей долбаеб, ты выбрал тему {PROBLEMS[int(problem_number)]}! Подожди немного!")
+    bot.send_message(message.from_user.id, f"Окей долбаеб, ты выбрал тему {PROBLEMS[int(problem_number)]}! Отправь любое сообщение!")
     time.sleep(2)
     bot.register_next_step_handler(message, show_problem)
 
 
-def show_problem(message):  # TODO подключить класс из parser.py. Подумать над подключением сервака
-    # TODO Посмотреть почему даблит некоторые сообщения!
-    # TODO провести анализ на наличие фотографий в задании.
-    # TODO в классе GetProblem есть метод getimage. Поработать над его подключением и отправкой фото заданий через screenshot_as_png
+def show_problem(message):
+    global prob_solution
+    PROBLEM = GetProblem()
+    if problem_number in withimage:
+        prob_contruction = PROBLEM.construct()
+        prob_image = PROBLEM.getimage()
+        prob_solution = PROBLEM.getsolution()
+        bot.send_photo(message.from_user.id, prob_contruction)
+        bot.send_photo(message.from_user.id, prob_image)
+    else:
+        prob_contruction = PROBLEM.construct()
+        prob_solution = PROBLEM.getsolution()
+        bot.send_photo(message.from_user.id, prob_contruction)
     bot.send_message(message.from_user.id, "Done!")
+
+
+@bot.message_handler(commands=['solution'])
+def show_solution(message):
+    bot.send_photo(message.from_user.id, prob_solution)
+    bot.stop_polling()
 
 
 bot.polling()

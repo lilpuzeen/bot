@@ -1,18 +1,16 @@
 import time
-from main import problem_number
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.keys import Keys
 from random import choice
-from PIL import Image
 
-
+# todo: импортнуть problem_number
+# todo: добавить --headless
 class GetProblem:
     def __init__(self):
         self.number = problem_number
-        self.PATH = "C:\\Users\\arman\\PycharmProjects\\bot\\chromedriver.exe"
+        self.PATH = "/Users/armantovmasyan/PycharmProjects/bot/chromedriver"
 
     def construct(self):
         global curr_url, prob_maindiv_exact_num
@@ -40,11 +38,12 @@ class GetProblem:
             pbody = maindiv.find_element_by_class_name("pbody")
             problem_photo = pbody.screenshot(f"Problem{prob_maindiv_exact_num}.png")
             driver.quit()
+            return f"Problem{prob_maindiv_exact_num}.png"
         except Exception as e:
             print(e)
             print(e.__traceback__)
             driver.quit()
-            print("Ошибка!!!")
+            return "Ошибка!!!"
 
     def getimage(self): # TODO анализ на наличие фотографий, иначе return None. Возможно raise TypeError по NoneType-у
         driver = webdriver.Chrome(self.PATH)
@@ -53,16 +52,19 @@ class GetProblem:
         pbody = maindiv.find_element_by_class_name("pbody")
         img = pbody.find_elements_by_tag_name("img")
         img[0].screenshot(f"Problem{prob_maindiv_exact_num}_picture.png")
+        return f"Problem{prob_maindiv_exact_num}_picture.png"
 
     def getsolution(self):
         driver = webdriver.Chrome(self.PATH)
         driver.get(curr_url)
         maindiv = driver.find_element_by_class_name("prob_maindiv")
         solution = maindiv.find_element_by_id(f"sol{prob_maindiv_exact_num}")
-        solution_photo = solution.screenshot(f"Problem{prob_maindiv_exact_num}_solution.png")
+        solution.screenshot(f"Problem{prob_maindiv_exact_num}_solution.png")
+        return f"Problem{prob_maindiv_exact_num}_solution.png"
 
 
-if __name__ == '__main__':
-    a = GetProblem()
-    a.construct()
-    a.getsolution()
+# if __name__ == '__main__':
+#     a = GetProblem()
+#     a.construct()
+#     a.getimage()
+#     a.getsolution()
